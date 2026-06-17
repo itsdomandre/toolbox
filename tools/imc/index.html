@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de IMC — ToolBox</title>
+  <meta name="description" content="Calcule seu IMC gratuitamente. Veja se seu peso está adequado para sua altura e descubra seu peso ideal.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>#tb-toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.tb-toast-item{background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:all .25s ease}.tb-toast-item.show{opacity:1;transform:translateY(0)}.gauge-marker{transition:left .5s ease}</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-xl">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">🛠️</div><span class="font-bold text-lg">ToolBox</span></a>
+      <a href="../../index.html" class="text-slate-400 hover:text-white text-sm transition hidden sm:block">← Todas as ferramentas</a>
+    </div>
+  </header>
+
+  <div class="bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-4 py-6">
+      <p class="text-xs text-slate-400 mb-2"><a href="../../index.html" class="hover:text-indigo-600">ToolBox</a> › Calculadora de IMC</p>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-rose-100 text-rose-600 rounded-xl flex items-center justify-center text-2xl">⚖️</div>
+        <div><h1 class="text-2xl font-extrabold text-slate-900">Calculadora de IMC</h1><p class="text-sm text-slate-500">Índice de Massa Corporal — descubra seu peso ideal.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4 mt-6 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <main class="max-w-3xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6 mb-6">
+      <div class="flex gap-2 mb-6">
+        <button id="btn-metric" onclick="setUnit('metric')" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-rose-500 text-white transition">Métrico (kg/cm)</button>
+        <button id="btn-imperial" onclick="setUnit('imperial')" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Imperial (lb/ft)</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Peso</label>
+          <div class="relative"><input id="weight" type="number" step="0.1" min="1" placeholder="70" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-rose-400 transition pr-16" oninput="calc()"><span id="weight-unit" class="absolute inset-y-0 right-4 flex items-center text-slate-400 font-medium">kg</span></div>
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-700 mb-2">Altura</label>
+          <div class="relative"><input id="height" type="number" step="1" min="50" placeholder="170" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-lg focus:outline-none focus:ring-2 focus:ring-rose-400 transition pr-16" oninput="calc()"><span id="height-unit" class="absolute inset-y-0 right-4 flex items-center text-slate-400 font-medium">cm</span></div>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="setSex('m')" id="btn-m" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-slate-700 text-white transition">♂ Masculino</button>
+        <button onclick="setSex('f')" id="btn-f" class="flex-1 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">♀ Feminino</button>
+      </div>
+    </div>
+
+    <div id="result" class="hidden space-y-4">
+      <div id="result-card" class="rounded-2xl p-8 text-white text-center shadow-lg">
+        <p class="text-white/80 text-sm mb-1">Seu IMC</p>
+        <p id="imc-value" class="text-6xl font-extrabold mb-2"></p>
+        <p id="imc-cat" class="text-xl font-bold"></p>
+      </div>
+
+      <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+        <p class="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-4">Escala IMC</p>
+        <div class="relative h-5 rounded-full overflow-hidden mb-2" style="background:linear-gradient(to right,#3b82f6 0%,#22c55e 25%,#eab308 50%,#f97316 65%,#ef4444 80%,#991b1b 100%)">
+          <div id="gauge" class="gauge-marker absolute top-0 w-3 h-full bg-white border-2 border-slate-700 rounded-full" style="left:0%;transform:translateX(-50%)"></div>
+        </div>
+        <div class="flex justify-between text-xs text-slate-400 mt-1"><span>16</span><span>18.5</span><span>25</span><span>30</span><span>35</span><span>40+</span></div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-2">Peso ideal</p>
+          <p id="ideal-range" class="text-lg font-bold text-slate-900"></p>
+          <p class="text-xs text-slate-500">para sua altura</p>
+        </div>
+        <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-2">Diferença</p>
+          <p id="diff" class="text-lg font-bold"></p>
+          <p class="text-xs text-slate-500">do peso ideal</p>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-slate-50 border-b border-slate-100"><th class="text-left px-4 py-3 font-semibold text-slate-600">Classificação</th><th class="text-right px-4 py-3 font-semibold text-slate-600">IMC</th></tr></thead>
+          <tbody id="imc-table"></tbody>
+        </table>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <p class="text-xs text-amber-700">⚕️ O IMC é um indicador geral. Consulte um profissional de saúde para avaliação completa, especialmente atletas e idosos.</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="max-w-3xl mx-auto px-4 pb-8 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-500">© 2026 ToolBox · <a href="../../index.html" class="hover:text-white transition">Ver todas as ferramentas</a></p>
+    </div>
+  </footer>
+
+  <div id="tb-toast"></div>
+  <script>
+    let unit = 'metric', sex = 'm';
+    const cats = [
+      {label:'Magreza grave', min:0, max:16, color:'#3b82f6', bg:'from-blue-500 to-blue-600'},
+      {label:'Magreza moderada', min:16, max:17, color:'#60a5fa', bg:'from-blue-400 to-blue-500'},
+      {label:'Magreza leve', min:17, max:18.5, color:'#93c5fd', bg:'from-blue-300 to-blue-400'},
+      {label:'Peso normal ✓', min:18.5, max:25, color:'#22c55e', bg:'from-green-500 to-emerald-600'},
+      {label:'Sobrepeso', min:25, max:30, color:'#eab308', bg:'from-yellow-500 to-yellow-600'},
+      {label:'Obesidade Grau I', min:30, max:35, color:'#f97316', bg:'from-orange-500 to-orange-600'},
+      {label:'Obesidade Grau II', min:35, max:40, color:'#ef4444', bg:'from-red-500 to-red-600'},
+      {label:'Obesidade Grau III', min:40, max:999, color:'#991b1b', bg:'from-red-800 to-red-900'},
+    ];
+
+    function setUnit(u) {
+      unit = u;
+      document.getElementById('btn-metric').className = `flex-1 py-2 rounded-xl text-sm font-semibold transition ${u==='metric'?'bg-rose-500 text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}`;
+      document.getElementById('btn-imperial').className = `flex-1 py-2 rounded-xl text-sm font-semibold transition ${u==='imperial'?'bg-rose-500 text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}`;
+      document.getElementById('weight-unit').textContent = u === 'metric' ? 'kg' : 'lb';
+      document.getElementById('height-unit').textContent = u === 'metric' ? 'cm' : 'ft';
+      document.getElementById('weight').placeholder = u === 'metric' ? '70' : '154';
+      document.getElementById('height').placeholder = u === 'metric' ? '170' : '5.7';
+      calc();
+    }
+
+    function setSex(s) {
+      sex = s;
+      document.getElementById('btn-m').className = `flex-1 py-2 rounded-xl text-sm font-semibold transition ${s==='m'?'bg-slate-700 text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}`;
+      document.getElementById('btn-f').className = `flex-1 py-2 rounded-xl text-sm font-semibold transition ${s==='f'?'bg-slate-700 text-white':'bg-slate-100 text-slate-600 hover:bg-slate-200'}`;
+      calc();
+    }
+
+    function calc() {
+      let w = parseFloat(document.getElementById('weight').value);
+      let h = parseFloat(document.getElementById('height').value);
+      if (!w || !h || w <= 0 || h <= 0) { document.getElementById('result').classList.add('hidden'); return; }
+      if (unit === 'imperial') { w = w * 0.453592; h = h * 30.48; }
+      const hm = h / 100;
+      const imc = w / (hm * hm);
+      if (imc < 1 || imc > 200) { document.getElementById('result').classList.add('hidden'); return; }
+      const cat = cats.find(c => imc >= c.min && imc < c.max) || cats[cats.length-1];
+      document.getElementById('imc-value').textContent = imc.toFixed(1);
+      document.getElementById('imc-cat').textContent = cat.label;
+      document.getElementById('result-card').className = `rounded-2xl p-8 text-white text-center shadow-lg bg-gradient-to-br ${cat.bg}`;
+      const pct = Math.min(100, Math.max(0, (imc - 16) / (40 - 16) * 100));
+      document.getElementById('gauge').style.left = pct + '%';
+      const idealMin = sex === 'm' ? 18.5 * hm * hm : 18.5 * hm * hm;
+      const idealMax = sex === 'm' ? 24.9 * hm * hm : 24.9 * hm * hm;
+      document.getElementById('ideal-range').textContent = `${idealMin.toFixed(1)} – ${idealMax.toFixed(1)} kg`;
+      const diff = w - (idealMin + idealMax) / 2;
+      const diffEl = document.getElementById('diff');
+      diffEl.textContent = (diff > 0 ? '+' : '') + diff.toFixed(1) + ' kg';
+      diffEl.className = `text-lg font-bold ${Math.abs(diff) < 2 ? 'text-green-600' : diff > 0 ? 'text-red-500' : 'text-blue-500'}`;
+      const tbody = document.getElementById('imc-table');
+      tbody.innerHTML = cats.map(c => `<tr class="${imc >= c.min && imc < c.max ? 'bg-indigo-50' : ''} border-b border-slate-50"><td class="px-4 py-2.5 flex items-center gap-2"><span class="w-2.5 h-2.5 rounded-full inline-block" style="background:${c.color}"></span>${c.label}${imc >= c.min && imc < c.max ? ' <span class="text-xs text-indigo-600 font-bold ml-1">← você</span>' : ''}</td><td class="px-4 py-2.5 text-right text-slate-500">${c.max===999?'≥ 40':`${c.min} – ${c.max}`}</td></tr>`).join('');
+      document.getElementById('result').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Percentagem — ToolBox</title>
+  <meta name="description" content="Calcule percentagens, variações, descontos e acréscimos instantaneamente. Ferramenta gratuita online.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>#tb-toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.tb-toast-item{background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:all .25s ease}.tb-toast-item.show{opacity:1;transform:translateY(0)}</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-xl">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">🛠️</div><span class="font-bold text-lg">ToolBox</span></a>
+      <a href="../../index.html" class="text-slate-400 hover:text-white text-sm transition hidden sm:block">← Todas as ferramentas</a>
+    </div>
+  </header>
+
+  <div class="bg-white border-b border-slate-100">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <p class="text-xs text-slate-400 mb-2"><a href="../../index.html" class="hover:text-indigo-600">ToolBox</a> › Calculadora de Percentagem</p>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center text-2xl">🧮</div>
+        <div><h1 class="text-2xl font-extrabold text-slate-900">Calculadora de Percentagem</h1><p class="text-sm text-slate-500">4 calculadoras num só lugar: percentagem, variação, desconto e mais.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 mt-6 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+      <!-- Calc 1: X% de Y -->
+      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6">
+        <h2 class="font-bold text-slate-900 text-base mb-1">Quanto é X% de Y?</h2>
+        <p class="text-xs text-slate-400 mb-4">Ex: 15% de 200 = 30</p>
+        <div class="flex items-center gap-2 mb-3 flex-wrap">
+          <input id="c1a" type="number" placeholder="15" class="w-20 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-emerald-400" oninput="c1()">
+          <span class="text-slate-500 font-semibold">% de</span>
+          <input id="c1b" type="number" placeholder="200" class="w-28 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-emerald-400" oninput="c1()">
+        </div>
+        <div id="r1" class="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex justify-between items-center hidden">
+          <p class="text-slate-600 text-sm">Resultado</p>
+          <div class="flex items-center gap-2">
+            <span id="r1v" class="text-2xl font-extrabold text-emerald-700"></span>
+            <button onclick="copyText(document.getElementById('r1v').textContent)" class="text-xs text-emerald-600 hover:text-emerald-800">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calc 2: X é quantos % de Y? -->
+      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6">
+        <h2 class="font-bold text-slate-900 text-base mb-1">X é quantos % de Y?</h2>
+        <p class="text-xs text-slate-400 mb-4">Ex: 30 é 15% de 200</p>
+        <div class="flex items-center gap-2 mb-3 flex-wrap">
+          <input id="c2a" type="number" placeholder="30" class="w-24 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="c2()">
+          <span class="text-slate-500 font-semibold">é % de</span>
+          <input id="c2b" type="number" placeholder="200" class="w-24 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-400" oninput="c2()">
+        </div>
+        <div id="r2" class="bg-blue-50 border border-blue-200 rounded-xl p-4 flex justify-between items-center hidden">
+          <p class="text-slate-600 text-sm">Resultado</p>
+          <div class="flex items-center gap-2">
+            <span id="r2v" class="text-2xl font-extrabold text-blue-700"></span>
+            <button onclick="copyText(document.getElementById('r2v').textContent)" class="text-xs text-blue-600 hover:text-blue-800">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calc 3: Variação % -->
+      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6">
+        <h2 class="font-bold text-slate-900 text-base mb-1">Variação percentual</h2>
+        <p class="text-xs text-slate-400 mb-4">Ex: de 100 para 150 = +50%</p>
+        <div class="flex items-center gap-2 mb-3 flex-wrap">
+          <span class="text-slate-500 text-sm">De</span>
+          <input id="c3a" type="number" placeholder="100" class="w-24 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-violet-400" oninput="c3()">
+          <span class="text-slate-500 text-sm">para</span>
+          <input id="c3b" type="number" placeholder="150" class="w-24 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-violet-400" oninput="c3()">
+        </div>
+        <div id="r3" class="border rounded-xl p-4 flex justify-between items-center hidden">
+          <p class="text-slate-600 text-sm">Variação</p>
+          <div class="flex items-center gap-2">
+            <span id="r3v" class="text-2xl font-extrabold"></span>
+            <button onclick="copyText(document.getElementById('r3v').textContent)" class="text-xs">📋</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calc 4: Adicionar / Remover % -->
+      <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-6">
+        <h2 class="font-bold text-slate-900 text-base mb-1">Adicionar / Remover %</h2>
+        <p class="text-xs text-slate-400 mb-4">Ex: 200 + 15% = 230</p>
+        <div class="flex items-center gap-2 mb-3 flex-wrap">
+          <input id="c4a" type="number" placeholder="200" class="w-24 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-amber-400" oninput="c4()">
+          <select id="c4op" class="border border-slate-300 rounded-lg px-2 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400 text-slate-700" onchange="c4()"><option value="+">+ adicionar</option><option value="-">− remover</option></select>
+          <input id="c4b" type="number" placeholder="15" class="w-20 border border-slate-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-amber-400" oninput="c4()">
+          <span class="text-slate-500 font-semibold">%</span>
+        </div>
+        <div id="r4" class="bg-amber-50 border border-amber-200 rounded-xl p-4 hidden">
+          <div class="flex justify-between items-center mb-2">
+            <p class="text-slate-600 text-sm">Resultado final</p>
+            <div class="flex items-center gap-2"><span id="r4v" class="text-2xl font-extrabold text-amber-700"></span><button onclick="copyText(document.getElementById('r4v').textContent)" class="text-xs text-amber-600">📋</button></div>
+          </div>
+          <div class="flex justify-between text-xs text-slate-500"><span>Valor original: <strong id="r4orig" class="text-slate-700"></strong></span><span id="r4diff" class="font-medium"></span></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="max-w-4xl mx-auto px-4 pb-8 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-500">© 2026 ToolBox · <a href="../../index.html" class="hover:text-white transition">Ver todas as ferramentas</a></p>
+    </div>
+  </footer>
+
+  <div id="tb-toast"></div>
+  <script>
+    function toast(msg,type='success'){const w=document.getElementById('tb-toast');const e=document.createElement('div');e.className='tb-toast-item';e.textContent=(type==='success'?'✓ ':'✗ ')+msg;w.appendChild(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300)},2500);}
+    function copyText(t){navigator.clipboard.writeText(t).then(()=>toast('Copiado!')).catch(()=>toast('Erro','error'));}
+    function fmt(n){return parseFloat(n.toFixed(4)).toLocaleString('pt-BR');}
+
+    function c1(){const a=parseFloat(document.getElementById('c1a').value),b=parseFloat(document.getElementById('c1b').value);if(isNaN(a)||isNaN(b)){document.getElementById('r1').classList.add('hidden');return;}const r=a/100*b;document.getElementById('r1v').textContent=fmt(r);document.getElementById('r1').classList.remove('hidden');}
+    function c2(){const a=parseFloat(document.getElementById('c2a').value),b=parseFloat(document.getElementById('c2b').value);if(isNaN(a)||isNaN(b)||b===0){document.getElementById('r2').classList.add('hidden');return;}const r=a/b*100;document.getElementById('r2v').textContent=fmt(r)+'%';document.getElementById('r2').classList.remove('hidden');}
+    function c3(){const a=parseFloat(document.getElementById('c3a').value),b=parseFloat(document.getElementById('c3b').value);if(isNaN(a)||isNaN(b)||a===0){document.getElementById('r3').classList.add('hidden');return;}const r=(b-a)/Math.abs(a)*100;const pos=r>=0;const el=document.getElementById('r3');el.className=`border rounded-xl p-4 flex justify-between items-center ${pos?'bg-green-50 border-green-200':'bg-red-50 border-red-200'}`;document.getElementById('r3v').textContent=(pos?'+':'')+fmt(r)+'%';document.getElementById('r3v').className=`text-2xl font-extrabold ${pos?'text-green-700':'text-red-700'}`;el.classList.remove('hidden');}
+    function c4(){const a=parseFloat(document.getElementById('c4a').value),b=parseFloat(document.getElementById('c4b').value),op=document.getElementById('c4op').value;if(isNaN(a)||isNaN(b)){document.getElementById('r4').classList.add('hidden');return;}const diff=a*b/100;const r=op==='+'?a+diff:a-diff;document.getElementById('r4v').textContent=fmt(r);document.getElementById('r4orig').textContent=fmt(a);document.getElementById('r4diff').textContent=(op==='+'?'+':'-')+fmt(diff)+' ('+fmt(b)+'%)';document.getElementById('r4').classList.remove('hidden');}
+  </script>
+</body>
+</html>

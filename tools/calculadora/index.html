@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora Científica Online — ToolBox</title>
+  <meta name="description" content="Calculadora científica online com sin, cos, tan, logaritmos, raiz quadrada e histórico de cálculos.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    #tb-toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.tb-toast-item{background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:all .25s ease}.tb-toast-item.show{opacity:1;transform:translateY(0)}
+    .calc-btn{user-select:none;transition:all .1s ease;active:scale(.95)}
+    .calc-btn:active{transform:scale(.93)}
+  </style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-xl">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">🛠️</div><span class="font-bold text-lg">ToolBox</span></a>
+      <a href="../../index.html" class="text-slate-400 hover:text-white text-sm transition hidden sm:block">← Todas as ferramentas</a>
+    </div>
+  </header>
+
+  <div class="bg-white border-b border-slate-100">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <p class="text-xs text-slate-400 mb-2"><a href="../../index.html" class="hover:text-indigo-600">ToolBox</a> › Calculadora Científica</p>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-violet-100 text-violet-600 rounded-xl flex items-center justify-center text-2xl">📐</div>
+        <div><h1 class="text-2xl font-extrabold text-slate-900">Calculadora Científica</h1><p class="text-sm text-slate-500">Funções científicas completas com histórico de cálculos.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      <!-- Calculator -->
+      <div class="lg:col-span-2">
+        <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-2xl shadow-xl overflow-hidden">
+          <!-- Display -->
+          <div class="px-5 pt-5 pb-3 min-h-[100px] flex flex-col justify-end">
+            <p id="expr" class="text-slate-400 text-sm font-mono min-h-[20px] text-right truncate"></p>
+            <p id="display" class="text-white text-4xl font-bold text-right font-mono truncate">0</p>
+          </div>
+          <!-- Mode toggle -->
+          <div class="px-5 pb-3 flex justify-end gap-2">
+            <button id="deg-btn" onclick="setDeg(true)" class="text-xs px-3 py-1 rounded-lg bg-indigo-600 text-white font-semibold transition">DEG</button>
+            <button id="rad-btn" onclick="setDeg(false)" class="text-xs px-3 py-1 rounded-lg bg-slate-700 text-slate-300 font-semibold transition">RAD</button>
+          </div>
+          <!-- Buttons -->
+          <div class="grid grid-cols-4 gap-1.5 p-3">
+            <!-- Row 1 -->
+            <button class="calc-btn bg-red-600 hover:bg-red-500 text-white font-bold py-4 rounded-xl text-sm" onclick="press('C')">C</button>
+            <button class="calc-btn bg-slate-600 hover:bg-slate-500 text-white font-semibold py-4 rounded-xl text-sm" onclick="press('CE')">CE</button>
+            <button class="calc-btn bg-slate-600 hover:bg-slate-500 text-white font-semibold py-4 rounded-xl text-sm" onclick="press('(')">(</button>
+            <button class="calc-btn bg-slate-600 hover:bg-slate-500 text-white font-semibold py-4 rounded-xl text-sm" onclick="press(')')">)</button>
+            <!-- Row 2 -->
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('sin(')">sin</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('cos(')">cos</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('tan(')">tan</button>
+            <button class="calc-btn bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl text-xl" onclick="press('÷')">÷</button>
+            <!-- Row 3 -->
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('ln(')">ln</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('log(')">log</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('√(')">√</button>
+            <button class="calc-btn bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl text-xl" onclick="press('×')">×</button>
+            <!-- Row 4 -->
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('^2')">x²</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('^')">xʸ</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('π')">π</button>
+            <button class="calc-btn bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl text-xl" onclick="press('-')">−</button>
+            <!-- Row 5 -->
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('7')">7</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('8')">8</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('9')">9</button>
+            <button class="calc-btn bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl text-xl" onclick="press('+')">+</button>
+            <!-- Row 6 -->
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('4')">4</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('5')">5</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('6')">6</button>
+            <button class="calc-btn bg-slate-700 hover:bg-slate-600 text-violet-300 font-semibold py-4 rounded-xl text-sm" onclick="press('e')">e</button>
+            <!-- Row 7 -->
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('1')">1</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('2')">2</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('3')">3</button>
+            <button class="calc-btn bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-4 rounded-xl text-xl row-span-2" onclick="press('=')" style="grid-row:span 2">=</button>
+            <!-- Row 8 -->
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl col-span-2" onclick="press('0')">0</button>
+            <button class="calc-btn bg-slate-800 hover:bg-slate-700 text-white font-bold py-4 rounded-xl text-xl" onclick="press('.')">.</button>
+          </div>
+          <div class="px-3 pb-3">
+            <button class="calc-btn w-full bg-slate-700 hover:bg-slate-600 text-slate-300 font-semibold py-3 rounded-xl text-sm" onclick="press('DEL')">⌫ Apagar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- History -->
+      <div class="lg:col-span-1">
+        <div class="bg-white border border-slate-100 rounded-2xl shadow-sm h-full flex flex-col">
+          <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center">
+            <h3 class="font-bold text-slate-800 text-sm">Histórico</h3>
+            <button onclick="clearHist()" class="text-xs text-slate-400 hover:text-red-500 transition">Limpar</button>
+          </div>
+          <div id="history" class="flex-1 overflow-y-auto divide-y divide-slate-50 max-h-96 lg:max-h-none">
+            <p class="text-xs text-slate-400 text-center py-8">Os cálculos aparecem aqui.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div class="max-w-4xl mx-auto px-4 pb-8 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-500">© 2026 ToolBox · <a href="../../index.html" class="hover:text-white transition">Ver todas as ferramentas</a></p>
+    </div>
+  </footer>
+
+  <div id="tb-toast"></div>
+  <script>
+    function toast(msg,type='success'){const w=document.getElementById('tb-toast');const e=document.createElement('div');e.className='tb-toast-item';e.textContent=(type==='success'?'✓ ':'✗ ')+msg;w.appendChild(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300)},2500);}
+
+    let expr='', result='0', deg=true, hist=[], justCalc=false;
+
+    function setDeg(d){deg=d;document.getElementById('deg-btn').className=`text-xs px-3 py-1 rounded-lg font-semibold transition ${d?'bg-indigo-600 text-white':'bg-slate-700 text-slate-300'}`;document.getElementById('rad-btn').className=`text-xs px-3 py-1 rounded-lg font-semibold transition ${!d?'bg-indigo-600 text-white':'bg-slate-700 text-slate-300'}`;}
+
+    function updateDisplay(){document.getElementById('display').textContent=result||'0';document.getElementById('expr').textContent=expr;}
+
+    function press(k){
+      if(k==='C'){expr='';result='0';justCalc=false;updateDisplay();return;}
+      if(k==='CE'){if(expr.length>0){expr=expr.slice(0,-1);result=expr||'0';}updateDisplay();return;}
+      if(k==='DEL'){if(expr.length>0){expr=expr.slice(0,-1);result=expr||'0';}updateDisplay();return;}
+      if(k==='='){calculate();return;}
+      if(justCalc&&/^[0-9π(]/.test(k)){expr='';justCalc=false;}
+      expr+=k;result=expr;updateDisplay();
+    }
+
+    function calculate(){
+      if(!expr)return;
+      try{
+        let e=expr
+          .replace(/×/g,'*').replace(/÷/g,'/')
+          .replace(/π/g,'Math.PI')
+          .replace(/\be\b/g,'Math.E')
+          .replace(/√\(/g,'Math.sqrt(')
+          .replace(/ln\(/g,'Math.log(')
+          .replace(/log\(/g,'Math.log10(')
+          .replace(/\^2/g,'**2')
+          .replace(/\^/g,'**');
+        if(deg){e=e.replace(/sin\(/g,'Math.sin(Math.PI/180*').replace(/cos\(/g,'Math.cos(Math.PI/180*').replace(/tan\(/g,'Math.tan(Math.PI/180*');}
+        else{e=e.replace(/sin\(/g,'Math.sin(').replace(/cos\(/g,'Math.cos(').replace(/tan\(/g,'Math.tan(');}
+        const val=Function('"use strict";return('+e+')')();
+        if(!isFinite(val)||isNaN(val))throw new Error('Resultado inválido');
+        const fval=parseFloat(val.toPrecision(12)).toString();
+        addHist(expr,fval);
+        expr=fval; result=fval; justCalc=true;
+        updateDisplay();
+      }catch(err){result='Erro';updateDisplay();setTimeout(()=>{result=expr;updateDisplay();},1200);}
+    }
+
+    function addHist(e,r){hist.unshift({e,r});if(hist.length>20)hist.pop();renderHist();}
+    function clearHist(){hist=[];renderHist();}
+    function renderHist(){const el=document.getElementById('history');if(!hist.length){el.innerHTML='<p class="text-xs text-slate-400 text-center py-8">Os cálculos aparecem aqui.</p>';return;}el.innerHTML=hist.map(h=>`<div class="px-4 py-3 hover:bg-slate-50 cursor-pointer transition" onclick="restoreHist('${h.r}')"><p class="text-xs text-slate-400 font-mono truncate">${h.e}</p><p class="text-base font-bold text-slate-800 font-mono">${h.r}</p></div>`).join('');}
+    function restoreHist(v){expr=v;result=v;justCalc=true;updateDisplay();}
+
+    document.addEventListener('keydown',e=>{
+      if(e.key>='0'&&e.key<='9')press(e.key);
+      else if(e.key==='+')press('+');else if(e.key==='-')press('-');
+      else if(e.key==='*')press('×');else if(e.key==='/')press('÷');
+      else if(e.key==='.')press('.');else if(e.key==='(')press('(');else if(e.key===')')press(')');
+      else if(e.key==='Enter'||e.key==='=')press('=');
+      else if(e.key==='Backspace')press('DEL');
+      else if(e.key==='Escape')press('C');
+    });
+  </script>
+</body>
+</html>

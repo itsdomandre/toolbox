@@ -3,159 +3,218 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ToolBox — Ferramentas Online Gratuitas</title>
-  <meta name="description" content="10 ferramentas online gratuitas para o seu dia a dia: conversor de moedas, gerador QR, compressor de imagens, validador CPF, calculadora de idade e muito mais.">
-  <meta name="robots" content="index, follow">
+  <title>ToolBox — 20 Ferramentas Online Gratuitas</title>
+  <meta name="description" content="20 ferramentas online gratuitas: conversor de moedas, QR code, IMC, cronômetro, calculadora e muito mais. Sem cadastro, sem limites.">
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .tool-card{opacity:0;transform:translateY(16px);transition:opacity .4s ease,transform .4s ease}
+    .tool-card.visible{opacity:1;transform:translateY(0)}
+    #tb-toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+    .tb-toast-item{background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:all .25s ease}
+    .tb-toast-item.show{opacity:1;transform:translateY(0)}
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+<body class="bg-slate-50 min-h-screen flex flex-col text-slate-800">
 
-  <!-- HEADER -->
-  <header class="bg-indigo-700 text-white shadow-lg">
-    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="./index.html" class="flex items-center gap-2 hover:opacity-80 transition">
-        <span class="text-2xl">🛠️</span>
-        <span class="text-xl font-bold tracking-tight">ToolBox</span>
-      </a>
-      <span class="text-indigo-200 text-sm hidden sm:block">Ferramentas Online Gratuitas</span>
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-xl">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <div class="w-9 h-9 bg-indigo-500 rounded-xl flex items-center justify-center text-xl">🛠️</div>
+        <span class="text-xl font-extrabold tracking-tight">ToolBox</span>
+      </div>
+      <span class="text-slate-400 text-sm hidden sm:block">20 ferramentas gratuitas</span>
     </div>
   </header>
 
-  <!-- HERO -->
-  <section class="max-w-5xl mx-auto px-4 pt-12 pb-6 text-center">
-    <h1 class="text-4xl font-extrabold text-slate-900 mb-3">Ferramentas Online Gratuitas</h1>
-    <p class="text-lg text-slate-500 max-w-xl mx-auto">10 utilitários rápidos, gratuitos e que funcionam direto no seu navegador. Sem cadastro, sem instalação.</p>
+  <section class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white py-16 px-4">
+    <div class="max-w-3xl mx-auto text-center">
+      <div class="inline-flex items-center gap-2 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs px-4 py-1.5 rounded-full mb-6 font-medium">
+        ✨ 20 ferramentas · 100% gratuito · Sem cadastro
+      </div>
+      <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">Ferramentas Online <span class="text-indigo-400">Gratuitas</span></h1>
+      <p class="text-slate-400 text-lg mb-8 max-w-xl mx-auto">Utilitários rápidos que funcionam direto no navegador. Sem instalação, sem limites.</p>
+      <div class="relative max-w-xl mx-auto">
+        <span class="absolute inset-y-0 left-4 flex items-center text-slate-400 pointer-events-none text-lg">🔍</span>
+        <input id="search-input" type="text" placeholder="Buscar ferramenta..." class="w-full bg-white/10 backdrop-blur border border-white/20 text-white placeholder-slate-500 rounded-2xl py-3.5 pl-12 pr-4 text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white/15 transition">
+      </div>
+      <div class="flex items-center justify-center gap-6 mt-6 text-xs text-slate-400 flex-wrap">
+        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full inline-block"></span>20 ferramentas</span>
+        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full inline-block"></span>Sem cadastro</span>
+        <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-violet-400 rounded-full inline-block"></span>100% gratuito</span>
+      </div>
+    </div>
   </section>
 
-  <!-- ADSENSE TOP -->
-  <div class="max-w-5xl mx-auto px-4 w-full">
-    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
-    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 my-4">
-      [ ADSENSE · 728×90 · Leaderboard ]
+  <div class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b border-slate-200 shadow-sm">
+    <div class="max-w-6xl mx-auto px-4 py-3">
+      <div id="filter-tabs" class="flex gap-2 overflow-x-auto pb-0.5">
+        <button class="filter-btn flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition bg-indigo-600 text-white" data-cat="all">Todos</button>
+        <button class="filter-btn flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="utilidades">🔵 Utilidades</button>
+        <button class="filter-btn flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="financas">🟢 Finanças</button>
+        <button class="filter-btn flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="desenvolvimento">🟣 Desenvolvimento</button>
+        <button class="filter-btn flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="texto">🟡 Texto</button>
+        <button class="filter-btn flex-shrink-0 text-sm font-semibold px-4 py-1.5 rounded-full transition bg-slate-100 text-slate-600 hover:bg-slate-200" data-cat="saude">🔴 Saúde</button>
+      </div>
     </div>
   </div>
 
-  <!-- TOOLS GRID -->
-  <main class="max-w-5xl mx-auto px-4 pb-16 flex-1 w-full">
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+  <div class="max-w-6xl mx-auto px-4 mt-6 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 — substitua por &lt;ins class="adsbygoogle"&gt; ]</div>
+  </div>
 
-      <a href="./tools/currency/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">💱</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Conversor de Moedas</h2>
-          <p class="text-sm text-slate-500 mt-1">Converta entre 150+ moedas em tempo real.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+  <main class="max-w-6xl mx-auto px-4 py-8 flex-1 w-full">
+    <div id="tools-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+
+      <a href="./tools/my-ip/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="qual meu ip endereço provedor localização isp internet">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🌐</div>
+        <div class="flex-1 min-w-0"><div class="flex items-start gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-900 text-sm">Qual é o meu IP?</h3><span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">⭐ Popular</span></div><p class="text-xs text-slate-500 mb-3">Descubra seu IP, localização e provedor.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
       </a>
 
-      <a href="./tools/qrcode/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">📷</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Gerador de QR Code</h2>
-          <p class="text-sm text-slate-500 mt-1">Crie QR codes para links, texto ou WhatsApp.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/currency/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="financas" data-name="conversor moedas cambio dolar euro real libra">
+        <div class="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">💱</div>
+        <div class="flex-1 min-w-0"><div class="flex items-start gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-900 text-sm">Conversor de Moedas</h3><span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">⭐ Popular</span></div><p class="text-xs text-slate-500 mb-3">Converta entre 150+ moedas em tempo real.</p><span class="text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">Finanças</span></div>
       </a>
 
-      <a href="./tools/image-compress/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">🖼️</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Compressor de Imagens</h2>
-          <p class="text-sm text-slate-500 mt-1">Reduza o tamanho de fotos sem perder qualidade.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/imc/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="saude" data-name="imc indice massa corporal peso ideal obesidade saude">
+        <div class="w-14 h-14 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">⚖️</div>
+        <div class="flex-1 min-w-0"><div class="flex items-start gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-900 text-sm">Calculadora de IMC</h3><span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">⭐ Popular</span></div><p class="text-xs text-slate-500 mb-3">Calcule o IMC e descubra seu peso ideal.</p><span class="text-xs bg-rose-50 text-rose-600 border border-rose-200 px-2 py-0.5 rounded-full font-medium">Saúde</span></div>
       </a>
 
-      <a href="./tools/age-calculator/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">🎂</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Calculadora de Idade</h2>
-          <p class="text-sm text-slate-500 mt-1">Saiba sua idade exata em anos, meses e dias.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/cronometro/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="cronometro timer online tempo voltas pomodoro alarme">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">⏱️</div>
+        <div class="flex-1 min-w-0"><div class="flex items-start gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-900 text-sm">Cronômetro / Timer</h3><span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">⭐ Popular</span></div><p class="text-xs text-slate-500 mb-3">Cronômetro com voltas e timer com alarme.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
       </a>
 
-      <a href="./tools/cpf-validator/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">🪪</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Validador CPF / CNPJ</h2>
-          <p class="text-sm text-slate-500 mt-1">Valide ou gere CPF e CNPJ para testes.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/percentagem/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="financas" data-name="percentagem desconto variacao porcentagem calcular">
+        <div class="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🧮</div>
+        <div class="flex-1 min-w-0"><div class="flex items-start gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-900 text-sm">Calculadora de Percentagem</h3><span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">⭐ Popular</span></div><p class="text-xs text-slate-500 mb-3">Calcule percentagens, variações e descontos.</p><span class="text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">Finanças</span></div>
       </a>
 
-      <a href="./tools/text-tools/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">📝</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Ferramentas de Texto</h2>
-          <p class="text-sm text-slate-500 mt-1">Conte palavras, converta maiúsculas e muito mais.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/numero-extenso/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="texto" data-name="numero extenso reais valor contrato cheque nota fiscal escrever">
+        <div class="w-14 h-14 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🔢</div>
+        <div class="flex-1 min-w-0"><div class="flex items-start gap-2 mb-1 flex-wrap"><h3 class="font-bold text-slate-900 text-sm">Número por Extenso</h3><span class="text-xs bg-yellow-100 text-yellow-700 border border-yellow-200 px-2 py-0.5 rounded-full font-medium whitespace-nowrap">⭐ Popular</span></div><p class="text-xs text-slate-500 mb-3">Converta números para texto em português.</p><span class="text-xs bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-medium">Texto</span></div>
       </a>
 
-      <a href="./tools/unit-converter/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">📏</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Conversor de Unidades</h2>
-          <p class="text-sm text-slate-500 mt-1">Converta peso, distância, temperatura e volume.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/qrcode/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="gerador qr code link whatsapp email download">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">📷</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Gerador de QR Code</h3><p class="text-xs text-slate-500 mb-3">Crie QR codes para links, texto ou WhatsApp.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
       </a>
 
-      <a href="./tools/password-generator/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">🔐</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Gerador de Senha</h2>
-          <p class="text-sm text-slate-500 mt-1">Crie senhas fortes e seguras instantaneamente.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/image-compress/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="comprimir imagem foto reduzir tamanho jpeg png">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🖼️</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Compressor de Imagens</h3><p class="text-xs text-slate-500 mb-3">Reduza o tamanho de fotos sem perder qualidade.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
       </a>
 
-      <a href="./tools/json-formatter/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">🧩</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Formatador JSON / SQL</h2>
-          <p class="text-sm text-slate-500 mt-1">Formate, valide e minifique JSON e SQL.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/fuso-horario/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="fuso horario timezone converter cidades mundo horas">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🌍</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Fuso Horário Mundial</h3><p class="text-xs text-slate-500 mb-3">Compare horários em qualquer cidade do mundo.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
       </a>
 
-      <a href="./tools/loan-calculator/" class="bg-white rounded-2xl shadow-md p-6 flex flex-col gap-3 hover:shadow-xl hover:-translate-y-1 transition-all group">
-        <div class="text-4xl">🏦</div>
-        <div>
-          <h2 class="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition">Calculadora de Financiamento</h2>
-          <p class="text-sm text-slate-500 mt-1">Simule parcelas pelo sistema Price ou SAC.</p>
-        </div>
-        <span class="text-xs font-semibold text-indigo-600 mt-auto">Abrir →</span>
+      <a href="./tools/color-converter/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="desenvolvimento" data-name="cores hex rgb hsl paleta css design converter">
+        <div class="w-14 h-14 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🎨</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Conversor de Cores</h3><p class="text-xs text-slate-500 mb-3">Converta HEX, RGB, HSL e gere paletas de cores.</p><span class="text-xs bg-violet-50 text-violet-600 border border-violet-200 px-2 py-0.5 rounded-full font-medium">Desenvolvimento</span></div>
+      </a>
+
+      <a href="./tools/age-calculator/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="calculadora idade anos meses dias aniversario nascimento">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🎂</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Calculadora de Idade</h3><p class="text-xs text-slate-500 mb-3">Saiba sua idade exata em anos, meses e dias.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
+      </a>
+
+      <a href="./tools/cpf-validator/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="validador cpf cnpj gerador teste documentos">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🪪</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Validador CPF / CNPJ</h3><p class="text-xs text-slate-500 mb-3">Valide ou gere CPF e CNPJ para testes.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
+      </a>
+
+      <a href="./tools/base64/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="desenvolvimento" data-name="base64 url encoder decoder codificar decodificar">
+        <div class="w-14 h-14 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🔠</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Base64 / URL Encoder</h3><p class="text-xs text-slate-500 mb-3">Codifique e decodifique Base64 e URLs.</p><span class="text-xs bg-violet-50 text-violet-600 border border-violet-200 px-2 py-0.5 rounded-full font-medium">Desenvolvimento</span></div>
+      </a>
+
+      <a href="./tools/text-tools/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="texto" data-name="ferramentas texto palavras caracteres maiusculas minusculas">
+        <div class="w-14 h-14 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">📝</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Ferramentas de Texto</h3><p class="text-xs text-slate-500 mb-3">Conte palavras, converta maiúsculas e mais.</p><span class="text-xs bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-medium">Texto</span></div>
+      </a>
+
+      <a href="./tools/lorem-ipsum/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="texto" data-name="lorem ipsum texto placeholder design mockup paragrafos">
+        <div class="w-14 h-14 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">📄</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Gerador de Lorem Ipsum</h3><p class="text-xs text-slate-500 mb-3">Gere texto placeholder para designs e mockups.</p><span class="text-xs bg-amber-50 text-amber-600 border border-amber-200 px-2 py-0.5 rounded-full font-medium">Texto</span></div>
+      </a>
+
+      <a href="./tools/unit-converter/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="utilidades" data-name="conversor unidades peso distancia temperatura volume velocidade">
+        <div class="w-14 h-14 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">📏</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Conversor de Unidades</h3><p class="text-xs text-slate-500 mb-3">Converta peso, distância, temperatura e volume.</p><span class="text-xs bg-blue-50 text-blue-600 border border-blue-200 px-2 py-0.5 rounded-full font-medium">Utilidades</span></div>
+      </a>
+
+      <a href="./tools/password-generator/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="desenvolvimento" data-name="gerador senha segura forte criptografia">
+        <div class="w-14 h-14 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🔐</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Gerador de Senha</h3><p class="text-xs text-slate-500 mb-3">Crie senhas fortes com criptografia real.</p><span class="text-xs bg-violet-50 text-violet-600 border border-violet-200 px-2 py-0.5 rounded-full font-medium">Desenvolvimento</span></div>
+      </a>
+
+      <a href="./tools/json-formatter/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="desenvolvimento" data-name="json formatter validar minificar sql xml developer">
+        <div class="w-14 h-14 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🧩</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Formatador JSON / SQL</h3><p class="text-xs text-slate-500 mb-3">Formate, valide e minifique JSON e SQL.</p><span class="text-xs bg-violet-50 text-violet-600 border border-violet-200 px-2 py-0.5 rounded-full font-medium">Desenvolvimento</span></div>
+      </a>
+
+      <a href="./tools/loan-calculator/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="financas" data-name="financiamento emprestimo price sac parcela juros amortizacao">
+        <div class="w-14 h-14 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">🏦</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Calculadora de Financiamento</h3><p class="text-xs text-slate-500 mb-3">Simule parcelas pela Tabela Price ou SAC.</p><span class="text-xs bg-emerald-50 text-emerald-600 border border-emerald-200 px-2 py-0.5 rounded-full font-medium">Finanças</span></div>
+      </a>
+
+      <a href="./tools/calculadora/" class="tool-card group bg-white border border-slate-100 rounded-2xl p-5 flex items-start gap-4 hover:shadow-lg hover:-translate-y-1 transition-all duration-200" data-cat="desenvolvimento" data-name="calculadora cientifica sin cos tan logaritmo raiz historico">
+        <div class="w-14 h-14 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-2xl flex-shrink-0 group-hover:scale-110 transition-transform">📐</div>
+        <div class="flex-1 min-w-0"><h3 class="font-bold text-slate-900 text-sm mb-1">Calculadora Científica</h3><p class="text-xs text-slate-500 mb-3">Calculadora com funções científicas e histórico.</p><span class="text-xs bg-violet-50 text-violet-600 border border-violet-200 px-2 py-0.5 rounded-full font-medium">Desenvolvimento</span></div>
       </a>
 
     </div>
-
-    <!-- ADSENSE BOTTOM -->
-    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
-    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 mt-10">
-      [ ADSENSE · 728×90 · Leaderboard ]
+    <div id="empty-state" class="hidden text-center py-20">
+      <div class="text-6xl mb-4">🔍</div>
+      <h3 class="text-xl font-bold text-slate-700 mb-2">Nenhuma ferramenta encontrada</h3>
+      <p class="text-slate-400">Tente outra palavra-chave ou categoria.</p>
     </div>
   </main>
 
-  <!-- FOOTER -->
-  <footer class="bg-slate-800 text-slate-400 text-sm py-8 mt-auto">
-    <div class="max-w-5xl mx-auto px-4">
-      <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center mb-4">
-        <a href="./tools/currency/" class="hover:text-white transition">💱 Moedas</a>
-        <a href="./tools/qrcode/" class="hover:text-white transition">📷 QR Code</a>
-        <a href="./tools/image-compress/" class="hover:text-white transition">🖼️ Imagens</a>
-        <a href="./tools/age-calculator/" class="hover:text-white transition">🎂 Idade</a>
-        <a href="./tools/cpf-validator/" class="hover:text-white transition">🪪 CPF/CNPJ</a>
-        <a href="./tools/text-tools/" class="hover:text-white transition">📝 Texto</a>
-        <a href="./tools/unit-converter/" class="hover:text-white transition">📏 Unidades</a>
-        <a href="./tools/password-generator/" class="hover:text-white transition">🔐 Senha</a>
-        <a href="./tools/json-formatter/" class="hover:text-white transition">🧩 JSON</a>
-        <a href="./tools/loan-calculator/" class="hover:text-white transition">🏦 Financiamento</a>
+  <div class="max-w-6xl mx-auto px-4 pb-8 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 — substitua por &lt;ins class="adsbygoogle"&gt; ]</div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-10 mt-auto">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-6 mb-8">
+        <div><p class="text-slate-300 font-semibold text-xs uppercase tracking-widest mb-3">Utilidades</p><ul class="space-y-2"><li><a href="./tools/my-ip/" class="hover:text-white transition text-xs">🌐 Qual é meu IP</a></li><li><a href="./tools/qrcode/" class="hover:text-white transition text-xs">📷 QR Code</a></li><li><a href="./tools/image-compress/" class="hover:text-white transition text-xs">🖼️ Comprimir Imagem</a></li><li><a href="./tools/unit-converter/" class="hover:text-white transition text-xs">📏 Unidades</a></li><li><a href="./tools/cronometro/" class="hover:text-white transition text-xs">⏱️ Cronômetro</a></li><li><a href="./tools/fuso-horario/" class="hover:text-white transition text-xs">🌍 Fuso Horário</a></li><li><a href="./tools/age-calculator/" class="hover:text-white transition text-xs">🎂 Calculadora de Idade</a></li><li><a href="./tools/cpf-validator/" class="hover:text-white transition text-xs">🪪 CPF / CNPJ</a></li></ul></div>
+        <div><p class="text-slate-300 font-semibold text-xs uppercase tracking-widest mb-3">Finanças</p><ul class="space-y-2"><li><a href="./tools/currency/" class="hover:text-white transition text-xs">💱 Conversor de Moedas</a></li><li><a href="./tools/loan-calculator/" class="hover:text-white transition text-xs">🏦 Financiamento</a></li><li><a href="./tools/percentagem/" class="hover:text-white transition text-xs">🧮 Percentagem</a></li></ul></div>
+        <div><p class="text-slate-300 font-semibold text-xs uppercase tracking-widest mb-3">Desenvolvimento</p><ul class="space-y-2"><li><a href="./tools/password-generator/" class="hover:text-white transition text-xs">🔐 Gerador de Senha</a></li><li><a href="./tools/json-formatter/" class="hover:text-white transition text-xs">🧩 JSON Formatter</a></li><li><a href="./tools/color-converter/" class="hover:text-white transition text-xs">🎨 Cores</a></li><li><a href="./tools/base64/" class="hover:text-white transition text-xs">🔠 Base64</a></li><li><a href="./tools/calculadora/" class="hover:text-white transition text-xs">📐 Calculadora</a></li></ul></div>
+        <div><p class="text-slate-300 font-semibold text-xs uppercase tracking-widest mb-3">Texto</p><ul class="space-y-2"><li><a href="./tools/text-tools/" class="hover:text-white transition text-xs">📝 Ferramentas de Texto</a></li><li><a href="./tools/numero-extenso/" class="hover:text-white transition text-xs">🔢 Número por Extenso</a></li><li><a href="./tools/lorem-ipsum/" class="hover:text-white transition text-xs">📄 Lorem Ipsum</a></li></ul></div>
+        <div><p class="text-slate-300 font-semibold text-xs uppercase tracking-widest mb-3">Saúde</p><ul class="space-y-2"><li><a href="./tools/imc/" class="hover:text-white transition text-xs">⚖️ Calculadora de IMC</a></li></ul></div>
       </div>
-      <p class="text-center text-slate-500 text-xs">© 2026 ToolBox · Ferramentas Online Gratuitas · Sem cadastro · Sem cookies</p>
+      <div class="border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div class="flex items-center gap-2"><div class="w-7 h-7 bg-indigo-600 rounded-lg flex items-center justify-center text-sm">🛠️</div><span class="font-bold text-slate-200">ToolBox</span></div>
+        <p class="text-xs text-slate-500">20 ferramentas gratuitas · Sem cadastro · Sem cookies · © 2026</p>
+      </div>
     </div>
   </footer>
 
+  <div id="tb-toast"></div>
+  <script>
+    document.querySelectorAll('.tool-card').forEach((c,i)=>setTimeout(()=>c.classList.add('visible'),i*35));
+    document.getElementById('search-input').addEventListener('input',filter);
+    document.querySelectorAll('.filter-btn').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-btn').forEach(b=>{b.classList.remove('bg-indigo-600','text-white');b.classList.add('bg-slate-100','text-slate-600');});
+        btn.classList.add('bg-indigo-600','text-white');btn.classList.remove('bg-slate-100','text-slate-600');
+        filter();
+      });
+    });
+    function filter(){
+      const q=document.getElementById('search-input').value.toLowerCase().trim();
+      const cat=document.querySelector('.filter-btn.bg-indigo-600')?.dataset.cat||'all';
+      let n=0;
+      document.querySelectorAll('.tool-card').forEach(c=>{
+        const ok=(!q||(c.dataset.name||'').includes(q))&&(cat==='all'||c.dataset.cat===cat);
+        c.style.display=ok?'':'none'; if(ok)n++;
+      });
+      document.getElementById('empty-state').classList.toggle('hidden',n>0);
+    }
+    function toast(msg,type='success'){const w=document.getElementById('tb-toast');const e=document.createElement('div');e.className='tb-toast-item';e.textContent=(type==='success'?'✓ ':'✗ ')+msg;w.appendChild(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300)},2500);}
+  </script>
 </body>
 </html>

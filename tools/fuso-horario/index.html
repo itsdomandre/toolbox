@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de Fuso Horário Mundial — ToolBox</title>
+  <meta name="description" content="Compare horários em qualquer cidade do mundo. Converta fusos horários instantaneamente.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>#tb-toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.tb-toast-item{background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:all .25s ease}.tb-toast-item.show{opacity:1;transform:translateY(0)}</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-xl">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition"><div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">🛠️</div><span class="font-bold text-lg">ToolBox</span></a>
+      <a href="../../index.html" class="text-slate-400 hover:text-white text-sm transition hidden sm:block">← Todas as ferramentas</a>
+    </div>
+  </header>
+
+  <div class="bg-white border-b border-slate-100">
+    <div class="max-w-4xl mx-auto px-4 py-6">
+      <p class="text-xs text-slate-400 mb-2"><a href="../../index.html" class="hover:text-indigo-600">ToolBox</a> › Fuso Horário Mundial</p>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl">🌍</div>
+        <div><h1 class="text-2xl font-extrabold text-slate-900">Fuso Horário Mundial</h1><p class="text-sm text-slate-500">Compare horários em qualquer cidade do mundo em tempo real.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 mt-6 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <main class="max-w-4xl mx-auto px-4 py-8 flex-1 w-full">
+    <div class="flex gap-3 mb-6 flex-wrap">
+      <select id="city-select" class="flex-1 min-w-48 border border-slate-300 rounded-xl px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white text-sm">
+        <option value="">Adicionar cidade...</option>
+      </select>
+      <button onclick="addCity()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2.5 rounded-xl transition">+ Adicionar</button>
+    </div>
+
+    <div id="clocks" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8"></div>
+
+    <div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-5">
+      <h3 class="font-bold text-slate-800 mb-4">Converter horário específico</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">Fuso de origem</label>
+          <select id="conv-from" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"></select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">Data e hora</label>
+          <input type="datetime-local" id="conv-dt" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400">
+        </div>
+        <div>
+          <label class="text-xs text-slate-500 block mb-1">Fuso de destino</label>
+          <select id="conv-to" class="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400"></select>
+        </div>
+      </div>
+      <div id="conv-result" class="mt-4 hidden bg-blue-50 border border-blue-200 rounded-xl p-4 text-center">
+        <p class="text-sm text-slate-500 mb-1">Horário convertido</p>
+        <p id="conv-out" class="text-2xl font-bold text-blue-700"></p>
+      </div>
+      <button onclick="convertTime()" class="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl transition text-sm">Converter</button>
+    </div>
+  </main>
+
+  <div class="max-w-4xl mx-auto px-4 pb-8 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <p class="text-xs text-slate-500">© 2026 ToolBox · <a href="../../index.html" class="hover:text-white transition">Ver todas as ferramentas</a></p>
+    </div>
+  </footer>
+
+  <div id="tb-toast"></div>
+  <script>
+    function toast(msg,type='success'){const w=document.getElementById('tb-toast');const e=document.createElement('div');e.className='tb-toast-item';e.textContent=(type==='success'?'✓ ':'✗ ')+msg;w.appendChild(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300)},2500);}
+
+    const CITIES=[
+      {id:'sao-paulo',name:'São Paulo',tz:'America/Sao_Paulo',flag:'🇧🇷',region:'Brasil'},
+      {id:'brasilia',name:'Brasília',tz:'America/Sao_Paulo',flag:'🇧🇷',region:'Brasil'},
+      {id:'lisbon',name:'Lisboa',tz:'Europe/Lisbon',flag:'🇵🇹',region:'Portugal'},
+      {id:'london',name:'Londres',tz:'Europe/London',flag:'🇬🇧',region:'Reino Unido'},
+      {id:'paris',name:'Paris',tz:'Europe/Paris',flag:'🇫🇷',region:'França'},
+      {id:'madrid',name:'Madrid',tz:'Europe/Madrid',flag:'🇪🇸',region:'Espanha'},
+      {id:'new-york',name:'Nova York',tz:'America/New_York',flag:'🇺🇸',region:'EUA'},
+      {id:'los-angeles',name:'Los Angeles',tz:'America/Los_Angeles',flag:'🇺🇸',region:'EUA'},
+      {id:'toronto',name:'Toronto',tz:'America/Toronto',flag:'🇨🇦',region:'Canadá'},
+      {id:'buenos-aires',name:'Buenos Aires',tz:'America/Argentina/Buenos_Aires',flag:'🇦🇷',region:'Argentina'},
+      {id:'mexico',name:'Cidade do México',tz:'America/Mexico_City',flag:'🇲🇽',region:'México'},
+      {id:'tokyo',name:'Tóquio',tz:'Asia/Tokyo',flag:'🇯🇵',region:'Japão'},
+      {id:'sydney',name:'Sydney',tz:'Australia/Sydney',flag:'🇦🇺',region:'Austrália'},
+      {id:'dubai',name:'Dubai',tz:'Asia/Dubai',flag:'🇦🇪',region:'Emirados'},
+      {id:'moscow',name:'Moscou',tz:'Europe/Moscow',flag:'🇷🇺',region:'Rússia'},
+      {id:'beijing',name:'Pequim',tz:'Asia/Shanghai',flag:'🇨🇳',region:'China'},
+      {id:'singapore',name:'Singapura',tz:'Asia/Singapore',flag:'🇸🇬',region:'Singapura'},
+      {id:'mumbai',name:'Mumbai',tz:'Asia/Kolkata',flag:'🇮🇳',region:'Índia'},
+      {id:'cairo',name:'Cairo',tz:'Africa/Cairo',flag:'🇪🇬',region:'Egito'},
+      {id:'johannesburg',name:'Joanesburgo',tz:'Africa/Johannesburg',flag:'🇿🇦',region:'África do Sul'},
+    ];
+
+    let active=['sao-paulo','lisbon','london','new-york'];
+
+    function fmt(tz){return new Intl.DateTimeFormat('pt-BR',{timeZone:tz,hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(new Date());}
+    function fmtDate(tz){return new Intl.DateTimeFormat('pt-BR',{timeZone:tz,weekday:'short',day:'2-digit',month:'short'}).format(new Date());}
+    function getOffset(tz){const s=new Intl.DateTimeFormat('en',{timeZone:tz,timeZoneName:'short'}).format(new Date());const m=s.match(/GMT([+-]\d+(?::\d+)?)/);return m?m[1]:'+0';}
+
+    function renderClocks(){
+      const el=document.getElementById('clocks');
+      el.innerHTML=active.map(id=>{
+        const c=CITIES.find(x=>x.id===id);if(!c)return '';
+        return `<div class="bg-white border border-slate-100 rounded-2xl shadow-sm p-5">
+          <div class="flex justify-between items-start mb-3">
+            <div class="flex items-center gap-2"><span class="text-2xl">${c.flag}</span><div><p class="font-bold text-slate-900 text-sm">${c.name}</p><p class="text-xs text-slate-400">${c.region} · UTC${getOffset(c.tz)}</p></div></div>
+            <button onclick="removeCity('${id}')" class="text-slate-300 hover:text-red-400 transition text-lg leading-none">×</button>
+          </div>
+          <p class="clock-time font-mono text-3xl font-bold text-slate-900 mb-1" data-tz="${c.tz}">${fmt(c.tz)}</p>
+          <p class="font-mono text-xs text-slate-400" data-date-tz="${c.tz}">${fmtDate(c.tz)}</p>
+        </div>`;
+      }).join('');
+    }
+
+    function tick(){
+      document.querySelectorAll('.clock-time').forEach(el=>el.textContent=fmt(el.dataset.tz));
+      document.querySelectorAll('[data-date-tz]').forEach(el=>el.textContent=fmtDate(el.dataset.dateTz));
+    }
+
+    function populateSelect(){
+      const sel=document.getElementById('city-select');
+      sel.innerHTML='<option value="">Adicionar cidade...</option>'+CITIES.filter(c=>!active.includes(c.id)).map(c=>`<option value="${c.id}">${c.flag} ${c.name} — ${c.region}</option>`).join('');
+      ['conv-from','conv-to'].forEach(id=>{document.getElementById(id).innerHTML=CITIES.map(c=>`<option value="${c.tz}">${c.flag} ${c.name}</option>`).join('');});
+    }
+
+    function addCity(){const v=document.getElementById('city-select').value;if(!v||active.includes(v))return;active.push(v);renderClocks();populateSelect();}
+    function removeCity(id){active=active.filter(x=>x!==id);renderClocks();populateSelect();}
+
+    function convertTime(){
+      const from=document.getElementById('conv-from').value;
+      const to=document.getElementById('conv-to').value;
+      const dt=document.getElementById('conv-dt').value;
+      if(!dt){toast('Selecione uma data e hora','error');return;}
+      const d=new Date(dt);
+      const out=new Intl.DateTimeFormat('pt-BR',{timeZone:to,weekday:'long',day:'2-digit',month:'long',year:'numeric',hour:'2-digit',minute:'2-digit',hour12:false}).format(d);
+      document.getElementById('conv-out').textContent=out;
+      document.getElementById('conv-result').classList.remove('hidden');
+    }
+
+    // Init datetime input to now
+    const now=new Date();now.setSeconds(0);document.getElementById('conv-dt').value=now.toISOString().slice(0,16);
+
+    renderClocks();
+    populateSelect();
+    setInterval(tick,1000);
+  </script>
+</body>
+</html>

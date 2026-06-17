@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Qual é o Meu IP? — ToolBox</title>
+  <meta name="description" content="Descubra seu endereço IP público, localização, provedor de internet e fuso horário gratuitamente.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>#tb-toast{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;pointer-events:none}.tb-toast-item{background:#1e293b;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:0 4px 20px rgba(0,0,0,.3);opacity:0;transform:translateY(8px);transition:all .25s ease}.tb-toast-item.show{opacity:1;transform:translateY(0)}</style>
+</head>
+<body class="bg-slate-50 min-h-screen flex flex-col">
+  <header class="bg-gradient-to-r from-slate-900 to-indigo-950 text-white shadow-xl">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+        <div class="w-8 h-8 bg-indigo-500 rounded-lg flex items-center justify-center">🛠️</div>
+        <span class="font-bold text-lg">ToolBox</span>
+      </a>
+      <a href="../../index.html" class="text-slate-400 hover:text-white text-sm transition hidden sm:block">← Todas as ferramentas</a>
+    </div>
+  </header>
+
+  <div class="bg-white border-b border-slate-100">
+    <div class="max-w-3xl mx-auto px-4 py-6">
+      <p class="text-xs text-slate-400 mb-2"><a href="../../index.html" class="hover:text-indigo-600">ToolBox</a> › Qual é o meu IP?</p>
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl">🌐</div>
+        <div><h1 class="text-2xl font-extrabold text-slate-900">Qual é o meu IP?</h1><p class="text-sm text-slate-500">Seu endereço IP público, localização e informações de rede.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-3xl mx-auto px-4 mt-6 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <main class="max-w-3xl mx-auto px-4 py-8 flex-1 w-full">
+    <div id="loading" class="text-center py-16">
+      <div class="inline-block w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin mb-4"></div>
+      <p class="text-slate-500">Detectando seu IP...</p>
+    </div>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="bg-gradient-to-br from-indigo-600 to-violet-600 rounded-2xl p-8 text-white text-center shadow-lg">
+        <p class="text-indigo-200 text-sm mb-2 font-medium">Seu endereço IP público</p>
+        <p id="ip-display" class="text-4xl sm:text-5xl font-mono font-bold tracking-wider mb-4">—</p>
+        <button onclick="copyText(document.getElementById('ip-display').textContent)" class="bg-white/20 hover:bg-white/30 border border-white/30 text-white text-sm font-semibold px-5 py-2 rounded-xl transition">📋 Copiar IP</button>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-3">Localização</p>
+          <div class="space-y-2.5">
+            <div class="flex justify-between"><span class="text-sm text-slate-500">País</span><span id="country" class="text-sm font-semibold text-slate-900">—</span></div>
+            <div class="flex justify-between"><span class="text-sm text-slate-500">Cidade</span><span id="city" class="text-sm font-semibold text-slate-900">—</span></div>
+            <div class="flex justify-between"><span class="text-sm text-slate-500">Região</span><span id="region" class="text-sm font-semibold text-slate-900">—</span></div>
+            <div class="flex justify-between"><span class="text-sm text-slate-500">CEP / ZIP</span><span id="postal" class="text-sm font-semibold text-slate-900">—</span></div>
+          </div>
+        </div>
+        <div class="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm">
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-widest mb-3">Rede</p>
+          <div class="space-y-2.5">
+            <div class="flex justify-between gap-2"><span class="text-sm text-slate-500 flex-shrink-0">Provedor</span><span id="org" class="text-sm font-semibold text-slate-900 text-right truncate">—</span></div>
+            <div class="flex justify-between"><span class="text-sm text-slate-500">Fuso horário</span><span id="timezone" class="text-sm font-semibold text-slate-900">—</span></div>
+            <div class="flex justify-between"><span class="text-sm text-slate-500">Coordenadas</span><span id="coords" class="text-sm font-semibold text-slate-900">—</span></div>
+            <div class="flex justify-between"><span class="text-sm text-slate-500">Moeda</span><span id="currency" class="text-sm font-semibold text-slate-900">—</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex gap-3">
+        <button onclick="loadIP()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-5 rounded-xl transition">🔄 Atualizar</button>
+        <a id="maps-link" href="#" target="_blank" class="flex-1 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold py-3 px-5 rounded-xl transition text-center">🗺️ Ver no Mapa</a>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+        <p class="text-xs text-amber-700">ℹ️ Seu IP é visível para todos os sites que você visita. Esta ferramenta apenas o exibe de forma clara. Nenhum dado é armazenado.</p>
+      </div>
+    </div>
+
+    <div id="error" class="hidden text-center py-12">
+      <div class="text-5xl mb-4">⚠️</div>
+      <h3 class="text-lg font-bold text-slate-700 mb-2">Não foi possível detectar o IP</h3>
+      <p class="text-slate-500 mb-4">Verifique sua conexão com a internet.</p>
+      <button onclick="loadIP()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-xl transition">Tentar novamente</button>
+    </div>
+  </main>
+
+  <div class="max-w-3xl mx-auto px-4 pb-8 w-full">
+    <div class="w-full h-20 border-2 border-dashed border-indigo-100 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50/50">[ AdSense · 728×90 ]</div>
+  </div>
+
+  <footer class="bg-slate-900 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4 text-center">
+      <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center mb-4 text-xs">
+        <a href="../../tools/currency/" class="hover:text-white transition">💱 Moedas</a><a href="../../tools/imc/" class="hover:text-white transition">⚖️ IMC</a><a href="../../tools/cronometro/" class="hover:text-white transition">⏱️ Cronômetro</a><a href="../../tools/percentagem/" class="hover:text-white transition">🧮 Percentagem</a><a href="../../tools/color-converter/" class="hover:text-white transition">🎨 Cores</a><a href="../../tools/calculadora/" class="hover:text-white transition">📐 Calculadora</a>
+      </div>
+      <p class="text-xs text-slate-500">© 2026 ToolBox · 20 ferramentas gratuitas · <a href="../../index.html" class="hover:text-white transition">Ver todas</a></p>
+    </div>
+  </footer>
+
+  <div id="tb-toast"></div>
+  <script>
+    function toast(msg,type='success'){const w=document.getElementById('tb-toast');const e=document.createElement('div');e.className='tb-toast-item';e.textContent=(type==='success'?'✓ ':'✗ ')+msg;w.appendChild(e);requestAnimationFrame(()=>e.classList.add('show'));setTimeout(()=>{e.classList.remove('show');setTimeout(()=>e.remove(),300)},2500);}
+    function copyText(t){navigator.clipboard.writeText(t).then(()=>toast('Copiado!')).catch(()=>toast('Erro ao copiar','error'));}
+
+    async function loadIP() {
+      document.getElementById('loading').classList.remove('hidden');
+      document.getElementById('result').classList.add('hidden');
+      document.getElementById('error').classList.add('hidden');
+      try {
+        const r = await fetch('https://ipapi.co/json/');
+        if(!r.ok) throw new Error();
+        const d = await r.json();
+        document.getElementById('ip-display').textContent = d.ip || '—';
+        document.getElementById('country').textContent = (d.country_name || '—') + (d.country_code ? ' ' + countryFlag(d.country_code) : '');
+        document.getElementById('city').textContent = d.city || '—';
+        document.getElementById('region').textContent = d.region || '—';
+        document.getElementById('postal').textContent = d.postal || '—';
+        document.getElementById('org').textContent = d.org || '—';
+        document.getElementById('timezone').textContent = d.timezone || '—';
+        document.getElementById('coords').textContent = d.latitude && d.longitude ? `${d.latitude.toFixed(4)}, ${d.longitude.toFixed(4)}` : '—';
+        document.getElementById('currency').textContent = d.currency_name ? `${d.currency_name} (${d.currency})` : '—';
+        if(d.latitude && d.longitude) document.getElementById('maps-link').href = `https://www.google.com/maps?q=${d.latitude},${d.longitude}`;
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('result').classList.remove('hidden');
+      } catch(e) {
+        document.getElementById('loading').classList.add('hidden');
+        document.getElementById('error').classList.remove('hidden');
+      }
+    }
+
+    function countryFlag(code) {
+      return code.toUpperCase().replace(/./g, c => String.fromCodePoint(c.charCodeAt(0) + 127397));
+    }
+
+    loadIP();
+  </script>
+</body>
+</html>
