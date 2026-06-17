@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Idade — ToolBox</title>
+  <meta name="description" content="Calcule sua idade exata em anos, meses e dias. Descubra quantos dias viveu, seu signo e quando é seu próximo aniversário.">
+  <meta name="robots" content="index, follow">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <header class="bg-indigo-700 text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+        <span class="text-2xl">🛠️</span>
+        <span class="text-xl font-bold tracking-tight">ToolBox</span>
+      </a>
+      <span class="text-indigo-200 text-sm hidden sm:block">Ferramentas Online Gratuitas</span>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto px-4 w-full">
+    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
+    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 my-4">
+      [ ADSENSE · 728×90 · Leaderboard ]
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 pb-16 flex-1 w-full">
+    <nav class="text-sm text-slate-400 mb-4">
+      <a href="../../index.html" class="hover:text-indigo-600 transition">← Todas as ferramentas</a>
+    </nav>
+
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-1">🎂 Calculadora de Idade</h1>
+    <p class="text-slate-500 mb-6">Descubra sua idade exata, quantos dias viveu, seu signo e quando é o próximo aniversário.</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Input -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Data de nascimento</label>
+          <input id="birthDate" type="date"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base">
+        </div>
+        <div class="mb-5">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Calcular até (opcional)</label>
+          <input id="targetDate" type="date"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 text-base">
+          <p class="text-xs text-slate-400 mt-1">Deixe em branco para calcular até hoje.</p>
+        </div>
+        <button onclick="calculate()"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-lg transition text-base">
+          Calcular
+        </button>
+        <div id="inputError" class="hidden mt-3 text-red-500 text-sm font-semibold text-center"></div>
+      </div>
+
+      <!-- Results -->
+      <div id="resultsBox" class="hidden">
+        <div class="bg-indigo-600 text-white rounded-2xl shadow-md p-6 mb-4 text-center">
+          <p class="text-sm font-semibold text-indigo-200 uppercase tracking-wide mb-1">Sua idade</p>
+          <p id="ageMain" class="text-3xl font-extrabold"></p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-xs text-slate-400 font-semibold uppercase mb-1">Dias vividos</p>
+            <p id="totalDays" class="text-2xl font-extrabold text-slate-800"></p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-xs text-slate-400 font-semibold uppercase mb-1">Horas vividas</p>
+            <p id="totalHours" class="text-2xl font-extrabold text-slate-800"></p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-xs text-slate-400 font-semibold uppercase mb-1">Nasceu numa</p>
+            <p id="bornDay" class="text-xl font-extrabold text-slate-800"></p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center">
+            <p class="text-xs text-slate-400 font-semibold uppercase mb-1">Signo</p>
+            <p id="zodiac" class="text-xl font-extrabold text-slate-800"></p>
+          </div>
+          <div class="bg-white rounded-xl shadow p-4 text-center col-span-2">
+            <p class="text-xs text-slate-400 font-semibold uppercase mb-1">Próximo aniversário</p>
+            <p id="nextBirthday" class="text-lg font-extrabold text-indigo-600"></p>
+          </div>
+        </div>
+      </div>
+
+      <div id="placeholder" class="bg-white rounded-2xl shadow-md p-6 flex items-center justify-center text-slate-300 lg:block hidden">
+        <div class="text-center">
+          <div class="text-5xl mb-3">🎂</div>
+          <p class="text-sm">Os resultados aparecerão aqui</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADSENSE BOTTOM -->
+    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
+    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 mt-6">
+      [ ADSENSE · 728×90 · Leaderboard ]
+    </div>
+  </main>
+
+  <footer class="bg-slate-800 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center mb-4">
+        <a href="../../tools/currency/" class="hover:text-white transition">💱 Moedas</a>
+        <a href="../../tools/qrcode/" class="hover:text-white transition">📷 QR Code</a>
+        <a href="../../tools/image-compress/" class="hover:text-white transition">🖼️ Imagens</a>
+        <a href="../../tools/age-calculator/" class="hover:text-white transition">🎂 Idade</a>
+        <a href="../../tools/cpf-validator/" class="hover:text-white transition">🪪 CPF/CNPJ</a>
+        <a href="../../tools/text-tools/" class="hover:text-white transition">📝 Texto</a>
+        <a href="../../tools/unit-converter/" class="hover:text-white transition">📏 Unidades</a>
+        <a href="../../tools/password-generator/" class="hover:text-white transition">🔐 Senha</a>
+        <a href="../../tools/json-formatter/" class="hover:text-white transition">🧩 JSON</a>
+        <a href="../../tools/loan-calculator/" class="hover:text-white transition">🏦 Financiamento</a>
+      </div>
+      <p class="text-center text-slate-500 text-xs">© 2026 ToolBox · Ferramentas Online Gratuitas · Sem cadastro · Sem cookies</p>
+    </div>
+  </footer>
+
+  <script>
+    const WEEKDAYS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+
+    function getZodiac(month, day) {
+      const signs = [
+        {name:'Capricórnio ♑', m:12, d:22}, {name:'Aquário ♒', m:1, d:20},
+        {name:'Peixes ♓', m:2, d:19}, {name:'Áries ♈', m:3, d:21},
+        {name:'Touro ♉', m:4, d:20}, {name:'Gêmeos ♊', m:5, d:21},
+        {name:'Câncer ♋', m:6, d:21}, {name:'Leão ♌', m:7, d:23},
+        {name:'Virgem ♍', m:8, d:23}, {name:'Libra ♎', m:9, d:23},
+        {name:'Escorpião ♏', m:10, d:23}, {name:'Sagitário ♐', m:11, d:22},
+        {name:'Capricórnio ♑', m:12, d:32}
+      ];
+      for (let i = 0; i < signs.length - 1; i++) {
+        if (month === signs[i].m && day >= signs[i].d) return signs[i+1].name;
+        if (month === signs[i+1].m && day < signs[i+1].d) return signs[i+1].name;
+      }
+      return 'Capricórnio ♑';
+    }
+
+    function calculate() {
+      const birthStr = document.getElementById('birthDate').value;
+      const errEl = document.getElementById('inputError');
+      errEl.classList.add('hidden');
+
+      if (!birthStr) {
+        errEl.textContent = 'Por favor, insira sua data de nascimento.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      const birth = new Date(birthStr + 'T00:00:00');
+      const targetStr = document.getElementById('targetDate').value;
+      const target = targetStr ? new Date(targetStr + 'T00:00:00') : new Date();
+      target.setHours(0,0,0,0);
+
+      if (birth > target) {
+        errEl.textContent = 'A data de nascimento não pode ser no futuro.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      // Calculate years, months, days
+      let years = target.getFullYear() - birth.getFullYear();
+      let months = target.getMonth() - birth.getMonth();
+      let days = target.getDate() - birth.getDate();
+
+      if (days < 0) {
+        months--;
+        const prevMonth = new Date(target.getFullYear(), target.getMonth(), 0);
+        days += prevMonth.getDate();
+      }
+      if (months < 0) {
+        years--;
+        months += 12;
+      }
+
+      const totalDays = Math.floor((target - birth) / 86400000);
+      const totalHours = totalDays * 24;
+
+      const bornWeekday = WEEKDAYS[birth.getDay()];
+      const birthMonth = birth.getMonth() + 1;
+      const birthDay = birth.getDate();
+      const zodiac = getZodiac(birthMonth, birthDay);
+
+      // Next birthday
+      const today = new Date(); today.setHours(0,0,0,0);
+      let nextBd = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
+      if (nextBd < today) nextBd = new Date(today.getFullYear() + 1, birth.getMonth(), birth.getDate());
+      const daysUntil = Math.round((nextBd - today) / 86400000);
+      const bdStr = String(birth.getDate()).padStart(2,'0') + '/' + String(birth.getMonth()+1).padStart(2,'0');
+
+      document.getElementById('ageMain').textContent = `${years} anos, ${months} meses e ${days} dias`;
+      document.getElementById('totalDays').textContent = totalDays.toLocaleString('pt-BR');
+      document.getElementById('totalHours').textContent = '~' + totalHours.toLocaleString('pt-BR');
+      document.getElementById('bornDay').textContent = bornWeekday;
+      document.getElementById('zodiac').textContent = zodiac;
+      document.getElementById('nextBirthday').textContent = daysUntil === 0 ? `🎉 Hoje! (${bdStr})` : `Em ${daysUntil} dias (${bdStr})`;
+
+      document.getElementById('placeholder').classList.add('hidden');
+      document.getElementById('resultsBox').classList.remove('hidden');
+    }
+
+    // Set today as default target date
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth()+1).padStart(2,'0');
+    const dd = String(today.getDate()).padStart(2,'0');
+    document.getElementById('targetDate').value = `${yyyy}-${mm}-${dd}`;
+    document.getElementById('birthDate').max = `${yyyy}-${mm}-${dd}`;
+  </script>
+</body>
+</html>

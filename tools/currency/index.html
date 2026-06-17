@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversor de Moedas em Tempo Real — ToolBox</title>
+  <meta name="description" content="Converta entre mais de 150 moedas com taxas atualizadas. Ferramenta gratuita online, sem cadastro.">
+  <meta name="robots" content="index, follow">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <header class="bg-indigo-700 text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+        <span class="text-2xl">🛠️</span>
+        <span class="text-xl font-bold tracking-tight">ToolBox</span>
+      </a>
+      <span class="text-indigo-200 text-sm hidden sm:block">Ferramentas Online Gratuitas</span>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto px-4 w-full">
+    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
+    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 my-4">
+      [ ADSENSE · 728×90 · Leaderboard ]
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 pb-16 flex-1 w-full">
+    <nav class="text-sm text-slate-400 mb-4">
+      <a href="../../index.html" class="hover:text-indigo-600 transition">← Todas as ferramentas</a>
+    </nav>
+
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-1">💱 Conversor de Moedas</h1>
+    <p class="text-slate-500 mb-6">Taxas atualizadas em tempo real. Suporte a 150+ moedas.</p>
+
+    <div class="flex flex-col lg:flex-row gap-6">
+      <!-- TOOL -->
+      <div class="flex-1">
+        <div class="bg-white rounded-2xl shadow-md p-6">
+
+          <!-- Quick access -->
+          <div class="flex flex-wrap gap-2 mb-6">
+            <button onclick="setQuick('BRL','USD')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg transition">BRL → USD</button>
+            <button onclick="setQuick('BRL','EUR')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg transition">BRL → EUR</button>
+            <button onclick="setQuick('USD','EUR')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg transition">USD → EUR</button>
+            <button onclick="setQuick('USD','BRL')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg transition">USD → BRL</button>
+            <button onclick="setQuick('EUR','BRL')" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-3 py-1.5 rounded-lg transition">EUR → BRL</button>
+          </div>
+
+          <!-- Amount -->
+          <div class="mb-4">
+            <label class="block text-sm font-semibold text-slate-600 mb-1">Valor</label>
+            <input id="amount" type="number" value="1" min="0" step="any"
+              class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 text-lg font-semibold"
+              oninput="convert()">
+          </div>
+
+          <!-- From / Swap / To -->
+          <div class="flex items-end gap-3 mb-6">
+            <div class="flex-1">
+              <label class="block text-sm font-semibold text-slate-600 mb-1">De</label>
+              <select id="fromCurrency" class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400" onchange="convert()"></select>
+            </div>
+            <button onclick="swapCurrencies()" class="mb-0.5 bg-indigo-100 hover:bg-indigo-200 text-indigo-700 font-bold px-4 py-2 rounded-lg transition text-xl" title="Trocar moedas">⇄</button>
+            <div class="flex-1">
+              <label class="block text-sm font-semibold text-slate-600 mb-1">Para</label>
+              <select id="toCurrency" class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400" onchange="convert()"></select>
+            </div>
+          </div>
+
+          <!-- Result -->
+          <div id="resultBox" class="bg-indigo-50 rounded-xl p-5 text-center hidden">
+            <div id="resultMain" class="text-3xl font-extrabold text-indigo-700 mb-1"></div>
+            <div id="resultRate" class="text-sm text-slate-500"></div>
+            <div id="resultTime" class="text-xs text-slate-400 mt-1"></div>
+          </div>
+
+          <!-- Loading -->
+          <div id="loadingBox" class="bg-slate-50 rounded-xl p-5 text-center hidden">
+            <div class="text-slate-400 text-sm animate-pulse">Carregando taxas de câmbio...</div>
+          </div>
+
+          <!-- Error -->
+          <div id="errorBox" class="bg-red-50 border border-red-200 rounded-xl p-4 text-center hidden">
+            <div class="text-red-600 text-sm font-semibold" id="errorMsg">Não foi possível carregar as taxas. Verifique sua conexão.</div>
+          </div>
+
+          <!-- API Key Warning -->
+          <div id="apiKeyWarning" class="bg-amber-50 border border-amber-200 rounded-xl p-4 hidden mt-4">
+            <p class="text-amber-700 text-sm font-semibold">⚠️ Chave de API não configurada</p>
+            <p class="text-amber-600 text-xs mt-1">Edite o arquivo <code class="bg-amber-100 px-1 rounded">tools/currency/index.html</code> e substitua <code class="bg-amber-100 px-1 rounded">YOUR_EXCHANGERATE_API_KEY</code> pela sua chave gratuita de <a href="https://www.exchangerate-api.com" target="_blank" class="underline">exchangerate-api.com</a>.</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ADSENSE SIDEBAR -->
+      <div class="lg:w-72">
+        <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
+        <div class="w-full h-64 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50">
+          [ ADSENSE · 300×250 · Rectangle ]
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-slate-800 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center mb-4">
+        <a href="../../tools/currency/" class="hover:text-white transition">💱 Moedas</a>
+        <a href="../../tools/qrcode/" class="hover:text-white transition">📷 QR Code</a>
+        <a href="../../tools/image-compress/" class="hover:text-white transition">🖼️ Imagens</a>
+        <a href="../../tools/age-calculator/" class="hover:text-white transition">🎂 Idade</a>
+        <a href="../../tools/cpf-validator/" class="hover:text-white transition">🪪 CPF/CNPJ</a>
+        <a href="../../tools/text-tools/" class="hover:text-white transition">📝 Texto</a>
+        <a href="../../tools/unit-converter/" class="hover:text-white transition">📏 Unidades</a>
+        <a href="../../tools/password-generator/" class="hover:text-white transition">🔐 Senha</a>
+        <a href="../../tools/json-formatter/" class="hover:text-white transition">🧩 JSON</a>
+        <a href="../../tools/loan-calculator/" class="hover:text-white transition">🏦 Financiamento</a>
+      </div>
+      <p class="text-center text-slate-500 text-xs">© 2026 ToolBox · Ferramentas Online Gratuitas · Sem cadastro · Sem cookies</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_KEY = '4f397ef72f8a4f018487ce2';
+
+    const CURRENCIES = [
+      {code:'USD',name:'Dólar Americano'},{code:'EUR',name:'Euro'},{code:'GBP',name:'Libra Esterlina'},
+      {code:'BRL',name:'Real Brasileiro'},{code:'ARS',name:'Peso Argentino'},{code:'MXN',name:'Peso Mexicano'},
+      {code:'CLP',name:'Peso Chileno'},{code:'COP',name:'Peso Colombiano'},{code:'PEN',name:'Sol Peruano'},
+      {code:'UYU',name:'Peso Uruguaio'},{code:'PYG',name:'Guarani Paraguaio'},{code:'BOB',name:'Boliviano'},
+      {code:'VES',name:'Bolívar Venezuelano'},{code:'CRC',name:'Colón Costarriquenho'},{code:'GTQ',name:'Quetzal Guatemalteco'},
+      {code:'DOP',name:'Peso Dominicano'},{code:'HNL',name:'Lempira Hondurenho'},{code:'NIO',name:'Córdoba Nicaraguense'},
+      {code:'PAB',name:'Balboa Panamenho'},{code:'JPY',name:'Iene Japonês'},{code:'CNY',name:'Yuan Chinês'},
+      {code:'KRW',name:'Won Sul-Coreano'},{code:'INR',name:'Rupia Indiana'},{code:'AUD',name:'Dólar Australiano'},
+      {code:'CAD',name:'Dólar Canadense'},{code:'CHF',name:'Franco Suíço'},{code:'SEK',name:'Coroa Sueca'},
+      {code:'NOK',name:'Coroa Norueguesa'},{code:'DKK',name:'Coroa Dinamarquesa'},{code:'PLN',name:'Zloty Polonês'},
+      {code:'CZK',name:'Coroa Tcheca'},{code:'HUF',name:'Florim Húngaro'},{code:'RON',name:'Leu Romeno'},
+      {code:'BGN',name:'Lev Búlgaro'},{code:'HRK',name:'Kuna Croata'},{code:'RSD',name:'Dinar Sérvio'},
+      {code:'TRY',name:'Lira Turca'},{code:'UAH',name:'Hryvnia Ucraniana'},{code:'RUB',name:'Rublo Russo'},
+      {code:'ZAR',name:'Rand Sul-Africano'},{code:'EGP',name:'Libra Egípcia'},{code:'NGN',name:'Naira Nigeriana'},
+      {code:'KES',name:'Shilling Queniano'},{code:'GHS',name:'Cedi Ganense'},{code:'MAD',name:'Dirham Marroquino'},
+      {code:'TND',name:'Dinar Tunisiano'},{code:'AED',name:'Dirham Emiratense'},{code:'SAR',name:'Riyal Saudita'},
+      {code:'QAR',name:'Riyal Catarense'},{code:'KWD',name:'Dinar Kuwaitiano'},{code:'BHD',name:'Dinar do Bahrein'},
+      {code:'OMR',name:'Rial Omanense'},{code:'JOD',name:'Dinar Jordaniano'},{code:'ILS',name:'Novo Shekel Israelense'},
+      {code:'PKR',name:'Rupia Paquistanesa'},{code:'BDT',name:'Taka Bangladeshiana'},{code:'LKR',name:'Rupia do Sri Lanka'},
+      {code:'NPR',name:'Rupia Nepalesa'},{code:'MMK',name:'Kyat Mianmarense'},{code:'THB',name:'Baht Tailandês'},
+      {code:'VND',name:'Dong Vietnamita'},{code:'IDR',name:'Rupia Indonésia'},{code:'MYR',name:'Ringgit Malaio'},
+      {code:'PHP',name:'Peso Filipino'},{code:'SGD',name:'Dólar de Singapura'},{code:'HKD',name:'Dólar de Hong Kong'},
+      {code:'TWD',name:'Novo Dólar Taiwanês'},{code:'NZD',name:'Dólar Neozelandês'},{code:'XOF',name:'Franco CFA Oeste-Africano'},
+      {code:'XAF',name:'Franco CFA Centro-Africano'}
+    ];
+
+    let cachedRates = null;
+    let cacheBase = null;
+    let cacheTime = null;
+
+    function populateSelects() {
+      const from = document.getElementById('fromCurrency');
+      const to = document.getElementById('toCurrency');
+      CURRENCIES.forEach(c => {
+        from.innerHTML += `<option value="${c.code}">${c.code} — ${c.name}</option>`;
+        to.innerHTML += `<option value="${c.code}">${c.code} — ${c.name}</option>`;
+      });
+      from.value = 'USD';
+      to.value = 'BRL';
+    }
+
+    function setQuick(from, to) {
+      document.getElementById('fromCurrency').value = from;
+      document.getElementById('toCurrency').value = to;
+      convert();
+    }
+
+    function swapCurrencies() {
+      const from = document.getElementById('fromCurrency');
+      const to = document.getElementById('toCurrency');
+      [from.value, to.value] = [to.value, from.value];
+      convert();
+    }
+
+    async function fetchRates(base) {
+      if (API_KEY === 'YOUR_EXCHANGERATE_API_KEY') {
+        document.getElementById('apiKeyWarning').classList.remove('hidden');
+        document.getElementById('loadingBox').classList.add('hidden');
+        return null;
+      }
+
+      const cacheKey = `tb_rates_${base}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const data = JSON.parse(cached);
+        if (Date.now() - data.ts < 3600000) return data.rates;
+      }
+
+      try {
+        const res = await fetch(`https://v6.exchangerate-api.com/v6/${API_KEY}/latest/${base}`);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const json = await res.json();
+        if (json.result !== 'success') throw new Error(json['error-type']);
+        localStorage.setItem(cacheKey, JSON.stringify({rates: json.conversion_rates, ts: Date.now()}));
+        return json.conversion_rates;
+      } catch(e) {
+        return null;
+      }
+    }
+
+    async function convert() {
+      const amount = parseFloat(document.getElementById('amount').value);
+      const from = document.getElementById('fromCurrency').value;
+      const to = document.getElementById('toCurrency').value;
+
+      if (isNaN(amount) || amount < 0) return;
+
+      if (API_KEY === 'YOUR_EXCHANGERATE_API_KEY') {
+        document.getElementById('apiKeyWarning').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('resultBox').classList.add('hidden');
+      document.getElementById('errorBox').classList.add('hidden');
+      document.getElementById('loadingBox').classList.remove('hidden');
+
+      const rates = await fetchRates(from);
+      document.getElementById('loadingBox').classList.add('hidden');
+
+      if (!rates) {
+        document.getElementById('errorBox').classList.remove('hidden');
+        document.getElementById('errorMsg').textContent = 'Não foi possível carregar as taxas. Verifique sua conexão.';
+        return;
+      }
+
+      if (!rates[to]) {
+        document.getElementById('errorBox').classList.remove('hidden');
+        document.getElementById('errorMsg').textContent = `Moeda ${to} não disponível.`;
+        return;
+      }
+
+      const rate = rates[to];
+      const result = amount * rate;
+
+      const fmt = (val, code) => {
+        try {
+          return new Intl.NumberFormat('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 6}).format(val) + ' ' + code;
+        } catch {
+          return val.toFixed(4) + ' ' + code;
+        }
+      };
+
+      document.getElementById('resultMain').textContent = fmt(result, to);
+      document.getElementById('resultRate').textContent = `1 ${from} = ${rate.toFixed(6)} ${to}`;
+      document.getElementById('resultTime').textContent = 'Taxa atualizada há menos de 1 hora';
+      document.getElementById('resultBox').classList.remove('hidden');
+    }
+
+    populateSelects();
+    convert();
+  </script>
+</body>
+</html>

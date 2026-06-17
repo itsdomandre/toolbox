@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gerador de QR Code Gratuito — ToolBox</title>
+  <meta name="description" content="Crie QR codes gratuitos para links, texto, WhatsApp e e-mail. Baixe em PNG. Sem cadastro.">
+  <meta name="robots" content="index, follow">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <header class="bg-indigo-700 text-white shadow-lg">
+    <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="../../index.html" class="flex items-center gap-2 hover:opacity-80 transition">
+        <span class="text-2xl">🛠️</span>
+        <span class="text-xl font-bold tracking-tight">ToolBox</span>
+      </a>
+      <span class="text-indigo-200 text-sm hidden sm:block">Ferramentas Online Gratuitas</span>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto px-4 w-full">
+    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
+    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 my-4">
+      [ ADSENSE · 728×90 · Leaderboard ]
+    </div>
+  </div>
+
+  <main class="max-w-5xl mx-auto px-4 pb-16 flex-1 w-full">
+    <nav class="text-sm text-slate-400 mb-4">
+      <a href="../../index.html" class="hover:text-indigo-600 transition">← Todas as ferramentas</a>
+    </nav>
+
+    <h1 class="text-3xl font-extrabold text-slate-900 mb-1">📷 Gerador de QR Code</h1>
+    <p class="text-slate-500 mb-6">Crie QR codes para links, texto, WhatsApp ou e-mail. Baixe em PNG de graça.</p>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- LEFT: Config -->
+      <div class="bg-white rounded-2xl shadow-md p-6">
+
+        <!-- Tabs -->
+        <div class="flex gap-2 mb-5 flex-wrap">
+          <button onclick="setTab('url')" id="tab-url" class="tab-btn active-tab text-sm font-semibold px-4 py-2 rounded-lg transition">🔗 URL</button>
+          <button onclick="setTab('text')" id="tab-text" class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg transition">📄 Texto</button>
+          <button onclick="setTab('whatsapp')" id="tab-whatsapp" class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg transition">💬 WhatsApp</button>
+          <button onclick="setTab('email')" id="tab-email" class="tab-btn text-sm font-semibold px-4 py-2 rounded-lg transition">📧 E-mail</button>
+        </div>
+
+        <!-- URL -->
+        <div id="panel-url">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">URL</label>
+          <input id="input-url" type="url" placeholder="https://exemplo.com"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-4">
+        </div>
+
+        <!-- Text -->
+        <div id="panel-text" class="hidden">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Texto</label>
+          <textarea id="input-text" rows="4" placeholder="Digite qualquer texto aqui..."
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-4 resize-none"></textarea>
+        </div>
+
+        <!-- WhatsApp -->
+        <div id="panel-whatsapp" class="hidden">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Número (com DDD e código do país)</label>
+          <input id="input-wa-phone" type="tel" placeholder="+5511999999999"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Mensagem (opcional)</label>
+          <textarea id="input-wa-msg" rows="3" placeholder="Olá, tudo bem?"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-4 resize-none"></textarea>
+        </div>
+
+        <!-- Email -->
+        <div id="panel-email" class="hidden">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">E-mail</label>
+          <input id="input-email-addr" type="email" placeholder="destino@exemplo.com"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Assunto</label>
+          <input id="input-email-subject" type="text" placeholder="Assunto do e-mail"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-3">
+          <label class="block text-sm font-semibold text-slate-600 mb-1">Corpo</label>
+          <textarea id="input-email-body" rows="3"
+            class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400 mb-4 resize-none"></textarea>
+        </div>
+
+        <!-- Options -->
+        <div class="grid grid-cols-2 gap-4 mb-5">
+          <div>
+            <label class="block text-sm font-semibold text-slate-600 mb-1">Tamanho</label>
+            <select id="qrSize" class="border border-slate-300 rounded-lg px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-indigo-400">
+              <option value="128">Pequeno (128px)</option>
+              <option value="256" selected>Médio (256px)</option>
+              <option value="512">Grande (512px)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-semibold text-slate-600 mb-1">Cor do QR</label>
+            <input id="qrColor" type="color" value="#000000"
+              class="border border-slate-300 rounded-lg px-2 py-1 w-full h-10 focus:outline-none focus:ring-2 focus:ring-indigo-400 cursor-pointer">
+          </div>
+        </div>
+
+        <button onclick="generateQR()"
+          class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-5 rounded-lg transition text-base">
+          Gerar QR Code
+        </button>
+      </div>
+
+      <!-- RIGHT: Preview -->
+      <div class="bg-white rounded-2xl shadow-md p-6 flex flex-col items-center justify-center">
+        <div id="qr-placeholder" class="text-center text-slate-300">
+          <div class="text-6xl mb-3">📷</div>
+          <p class="text-sm">O QR Code aparecerá aqui</p>
+        </div>
+        <div id="qr-output" class="hidden flex-col items-center gap-4">
+          <div id="qrcode" class="p-4 bg-white rounded-xl shadow-inner border border-slate-100"></div>
+          <button onclick="downloadQR()"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-6 rounded-lg transition">
+            ⬇️ Baixar PNG
+          </button>
+        </div>
+        <div id="qr-error" class="hidden text-center text-red-500 text-sm font-semibold mt-4"></div>
+      </div>
+    </div>
+
+    <!-- ADSENSE BOTTOM -->
+    <!-- ADSENSE SLOT: replace this div with your <ins class="adsbygoogle"...> tag -->
+    <div class="w-full h-24 border-2 border-dashed border-indigo-200 rounded-xl flex items-center justify-center text-xs font-mono text-indigo-300 bg-indigo-50 mt-6">
+      [ ADSENSE · 728×90 · Leaderboard ]
+    </div>
+  </main>
+
+  <footer class="bg-slate-800 text-slate-400 text-sm py-8 mt-auto">
+    <div class="max-w-5xl mx-auto px-4">
+      <div class="flex flex-wrap gap-x-4 gap-y-2 justify-center mb-4">
+        <a href="../../tools/currency/" class="hover:text-white transition">💱 Moedas</a>
+        <a href="../../tools/qrcode/" class="hover:text-white transition">📷 QR Code</a>
+        <a href="../../tools/image-compress/" class="hover:text-white transition">🖼️ Imagens</a>
+        <a href="../../tools/age-calculator/" class="hover:text-white transition">🎂 Idade</a>
+        <a href="../../tools/cpf-validator/" class="hover:text-white transition">🪪 CPF/CNPJ</a>
+        <a href="../../tools/text-tools/" class="hover:text-white transition">📝 Texto</a>
+        <a href="../../tools/unit-converter/" class="hover:text-white transition">📏 Unidades</a>
+        <a href="../../tools/password-generator/" class="hover:text-white transition">🔐 Senha</a>
+        <a href="../../tools/json-formatter/" class="hover:text-white transition">🧩 JSON</a>
+        <a href="../../tools/loan-calculator/" class="hover:text-white transition">🏦 Financiamento</a>
+      </div>
+      <p class="text-center text-slate-500 text-xs">© 2026 ToolBox · Ferramentas Online Gratuitas · Sem cadastro · Sem cookies</p>
+    </div>
+  </footer>
+
+  <style>
+    .tab-btn { background: #f1f5f9; color: #64748b; }
+    .active-tab { background: #4f46e5; color: white; }
+  </style>
+
+  <script>
+    let currentTab = 'url';
+    let qrInstance = null;
+
+    function setTab(tab) {
+      currentTab = tab;
+      ['url','text','whatsapp','email'].forEach(t => {
+        document.getElementById('panel-' + t).classList.toggle('hidden', t !== tab);
+        document.getElementById('tab-' + t).classList.toggle('active-tab', t === tab);
+        document.getElementById('tab-' + t).classList.toggle('tab-btn', true);
+        if (t === tab) {
+          document.getElementById('tab-' + t).style.background = '#4f46e5';
+          document.getElementById('tab-' + t).style.color = 'white';
+        } else {
+          document.getElementById('tab-' + t).style.background = '#f1f5f9';
+          document.getElementById('tab-' + t).style.color = '#64748b';
+        }
+      });
+    }
+
+    function getContent() {
+      switch(currentTab) {
+        case 'url': return document.getElementById('input-url').value.trim();
+        case 'text': return document.getElementById('input-text').value.trim();
+        case 'whatsapp': {
+          const phone = document.getElementById('input-wa-phone').value.replace(/\D/g,'');
+          const msg = encodeURIComponent(document.getElementById('input-wa-msg').value.trim());
+          return `https://wa.me/${phone}${msg ? '?text=' + msg : ''}`;
+        }
+        case 'email': {
+          const addr = document.getElementById('input-email-addr').value.trim();
+          const subject = encodeURIComponent(document.getElementById('input-email-subject').value.trim());
+          const body = encodeURIComponent(document.getElementById('input-email-body').value.trim());
+          return `mailto:${addr}?subject=${subject}&body=${body}`;
+        }
+      }
+      return '';
+    }
+
+    function generateQR() {
+      const content = getContent();
+      const errEl = document.getElementById('qr-error');
+      errEl.classList.add('hidden');
+
+      if (!content) {
+        errEl.textContent = 'Por favor, insira um conteúdo antes de gerar o QR Code.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      const size = parseInt(document.getElementById('qrSize').value);
+      const color = document.getElementById('qrColor').value;
+      const container = document.getElementById('qrcode');
+
+      // Clear previous
+      container.innerHTML = '';
+      if (qrInstance) { try { qrInstance.clear(); } catch(e){} }
+
+      document.getElementById('qr-placeholder').classList.add('hidden');
+      document.getElementById('qr-output').classList.remove('hidden');
+      document.getElementById('qr-output').classList.add('flex');
+
+      qrInstance = new QRCode(container, {
+        text: content,
+        width: size,
+        height: size,
+        colorDark: color,
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    }
+
+    function downloadQR() {
+      const canvas = document.querySelector('#qrcode canvas');
+      if (!canvas) {
+        const img = document.querySelector('#qrcode img');
+        if (img) {
+          const a = document.createElement('a');
+          a.href = img.src;
+          a.download = 'qrcode.png';
+          a.click();
+        }
+        return;
+      }
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = 'qrcode.png';
+      a.click();
+    }
+
+    setTab('url');
+  </script>
+</body>
+</html>
